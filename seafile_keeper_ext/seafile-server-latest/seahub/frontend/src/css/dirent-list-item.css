@@ -40,8 +40,8 @@
 }
 
 .hover-keep {
-  width: 330px;
-  height: 32px;
+  width: 320px;
+  height: 55px;
   pointer-events: auto !important;
   &:hover {
   visibility: visible !important;

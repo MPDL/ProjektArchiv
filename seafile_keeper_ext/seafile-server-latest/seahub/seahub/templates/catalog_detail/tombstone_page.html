@@ -1,4 +1,3 @@
-{% load i18n %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -17,18 +16,18 @@
 		</div>
 
 		<div class="container tombstone_root">
-			<h3 class="doi_tombstone_title">{% trans "Dataset does not exist anymore" %}: <strong>{{md_dict.Title}}</strong></h3>
+			<h3 class="doi_tombstone_title">Dataset does not exist anymore: <strong>{{md_dict.Title}}</strong></h3> 
 			{% if doi %}
-			<p>{% blocktrans %}The dataset with identifier <strong class="doi_link">{{doi}}</strong> was removed along with removal of the library <strong>{{library_name}}</strong>.{% endblocktrans %}</p>
+			<p> The dataset with identifier <strong class="doi_link">{{doi}}</strong> was removed along with removal of the library <strong>{{library_name}}</strong>.</p>
 			{% else %}
-			<p>{% trans "The library has been removed, but an archive exists. Please contact the library owner or Keeper support in order to retrieve the data." %}</p>
+			<p>The library has been removed, but an archive exists. Please contact the library owner or Keeper support in order to retrieve the data.</p>
 			{% endif %}
 
 
-			<div class="doi_table_row more"><strong>{% trans "Description" %}: </strong>{{md_dict.Description}}</div>
-			<div class="doi_table_row"><strong>{% trans "Author(s)" %}: </strong>{{authors}}</div>
-			<div class="doi_table_row"><strong>{% trans "Institute" %}: </strong>{{institute}}</div>
-			<div class="doi_table_row"><strong>{% trans "Year" %}: </strong>{{md_dict.Year}}</div>
+			<div class="doi_table_row more"><strong>Description: </strong>{{md_dict.Description}}</div>
+			<div class="doi_table_row"><strong>Author(s): </strong>{{authors}}</div>
+			<div class="doi_table_row"><strong>Institute: </strong>{{institute}}</div>
+			<div class="doi_table_row"><strong>Year: </strong>{{md_dict.Year}}</div>
 		</div>
 		{% include "keeper_footer.html" %}
 		{% include "show_more.html" %}

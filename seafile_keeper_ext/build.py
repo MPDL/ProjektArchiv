@@ -347,19 +347,7 @@ class EnvManager(object):
         self.keeper_config.optionxform = str
         self.keeper_config.read_file(open(conf_files[0]))
 
-        kc = self.keeper_config
-        node_type = kc.get('global', '__NODE_TYPE__').lower()
-        is_background = node_type == 'background'
 
-        # set defaults
-        value = kc.get('global', '__INDEX_FILES__', fallback = 'true').lower()
-        kc.set('global', '__INDEX_FILES__', 'false' if value == 'false' else 'true')
-
-        # switch off webdav for BACKGROUND server
-        if is_background:
-            kc.set('http', '__WEBDAV_ENABLED__', 'false')
-        # TODO: move here entries items from expand_properties if possible
- 
     def set_seafile_env(self):
 
         # self.install_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -553,11 +541,14 @@ def expand_properties(content, path):
     is_background = node_type == 'background'
     for section in kc.sections():
         for key, value in kc.items(section):
-            # capitalize bools
+           # capitalize bools
             if value.lower() in ('false', 'true') and path.endswith('.py'):
                 value = value.capitalize()
             if key == '__EXTERNAL_ES_SERVER__':
                 value = value.lower()
+            # switch off webdav for BACKGROUND server
+            if key == '__WEBDAV_ENABLED__' and is_background:
+                value = 'false'
             # convert comma separated unicast peers to keepealived.conf valid value
             if key == '__MEMCACHED_KA_UNICAST_PEERS__' and ',' in value and path.endswith('keepalived.conf'):
                 value = '\n'.join(value.split(','))
@@ -734,19 +725,6 @@ def deploy_ext():
         user=keep_ini.get('system', '__OS_USER__'),
     )
 
-def deploy_i18n():
-    """
-    Deploy i18n 
-    """
-
-    Utils.info('Deploy i18n...')
-    ## deploy dirs
-    deploy_dir('seafile-server-latest/seahub/locale', expand=True)
-    Utils.run("make dist-keeper", cwd=env_mgr.seahub_dir, env=env_mgr.get_seahub_env())
-
-    Utils.info('Done.')
-
-
 def deploy_system_conf():
     """
     Deploy keeper system confs
@@ -857,8 +835,6 @@ def do_deploy(args):
         deploy_dir('conf', expand=True)
     elif args.ext:
         deploy_ext()
-    elif args.i18n:
-        deploy_i18n()
     elif args.http_conf:
         deploy_http_conf()
     elif args.system_conf:
@@ -900,7 +876,7 @@ def do_generate(args):
             Utils.error("Cannot run {}, RC={}".format(cmd, RC))
     elif args.frontend:
         Utils.info('Generate frontend...')
-        cmd = "npm install && npm run build"
+        cmd = "sudo npm run build"
         RC = Utils.run(cmd, cwd=os.path.join(env_mgr.seahub_dir, 'frontend'))
         if RC != 0:
             Utils.error("Cannot run {}, RC={}".format(cmd, RC))
@@ -910,7 +886,7 @@ def do_generate(args):
             args.seafile_src_to_ext = False
             do_upgrade(args)
             # deploy assets
-            Utils.run("make collectstatic", cwd=env_mgr.seahub_dir, env=env_mgr.get_seahub_env())
+            Utils.run("sudo make collectstatic", cwd=env_mgr.seahub_dir, env=env_mgr.get_seahub_env())
 
 def do_run(args):
     if args.frontend_dev:
@@ -970,7 +946,6 @@ def main():
     parser_deploy.set_defaults(func=do_deploy)
     parser_deploy.add_argument('--all', help='deploy all KEEPER components', action='store_true')
     parser_deploy.add_argument('--ext', help='deploy KEEPER ext sources', action='store_true')
-    parser_deploy.add_argument('--i18n', help='generate and deploy KEEPER i18n sources', action='store_true')
     parser_deploy.add_argument('--conf', help='deploy conf files in KEEPER ~ext/conf directory', action='store_true')
     parser_deploy.add_argument('--http-conf', help='deploy http-confs', action='store_true')
     parser_deploy.add_argument('--system-conf', help='deploy all system conf files on the node, --http-conf is included', action='store_true')

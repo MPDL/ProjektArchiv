@@ -16,14 +16,14 @@ from seaserv import seafile_api, get_repo
 from seahub.settings import SERVICE_URL, SERVER_EMAIL, ARCHIVE_METADATA_TARGET
 from seahub.share.models import FileShare
 
-from thirdpart.seafobj import commit_mgr, fs_mgr
+from seafobj import commit_mgr, fs_mgr
 import subprocess
 # from subprocess import STDOUT, call
 
 from keeper.default_library_manager import get_keeper_default_library
 from keeper.common import parse_markdown, get_logger
 
-from keeper.utils import get_user_name, validate_year, validate_institute, validate_author, validate_resource_type, validate_director
+from keeper.utils import get_user_name
 
 from keeper.models import Catalog
 
@@ -97,6 +97,126 @@ def is_certified_by_repo_id(repo_id):
 
 CDC_MSG = []
 
+def validate_author(txt):
+    """Author/Affiliations checking, format:
+    Lastname1, Firstname1; Affiliation11, Affiliation12, ...
+    Lastname2, Firstname2; Affiliation21, Affiliation22, ..
+    ...
+    """
+    valid = True
+    if txt:
+        pattern = re.compile("^(\s*[\w-]+)+,(\s*[\w.-]+)+(;\s*\S+\s*)*", re.UNICODE)
+        for line in txt.splitlines():
+            if not re.match(pattern, line):
+                valid = False
+                msg = 'Wrong Author/Affiliation string: ' + line
+                CDC_MSG.append(msg)
+    else:
+        valid = False
+        msg = 'Authors are empty'
+        CDC_MSG.append(msg)
+    return valid
+
+def validate_institute(txt):
+    """Institute checking, format:
+    InstituionName; Department; Director(or PI)Name, Vorname|Abbr.
+    """
+    t = txt
+    t = t and t.strip()
+
+    if not t: 
+        CDC_MSG.append('Empty institution string')
+        return False
+
+    valid = True
+    msg = None 
+
+    # normalize 
+    t = re.sub(r'\s+', ' ', t)
+    t = re.sub(r'(\s*([;,])\s*)+', r'\g<2>', t)
+    t = re.sub(r'(\s*\.\s*)+', '.', t)
+
+    # print('txt: %s -- normalized: %s' % (t, txt))
+    ins = t.strip(';').split(';')
+    # print('len(ins):%s' % len(ins))
+
+    if len(ins) >= 1:
+        # Institute name
+        if ins[0]:
+            pattern = re.compile(r'^(\s*[\w-]+\s*)+$', re.UNICODE)
+            # pattern = re.compile("^(\s*[\w-]+\s*)+?$", re.UNICODE)
+            if not re.match(pattern, ins[0]):
+                valid = False
+                msg = 'Wrong institution name'
+        else:
+            valid = False
+            msg = 'Institution name is empty'
+
+        # Department name
+        if len(ins) >= 2:
+            if ins[1]: 
+                pattern = re.compile(r'^(\s*[\w-]+\s*)+$', re.UNICODE)
+                if not re.match(pattern, ins[1]):
+                    valid = False
+                    msg = 'Wrong department name'
+            else:
+                valid = False
+                msg = 'Department name is empty'
+
+            # Director name
+            if len(ins) >= 3:
+                if ins[2]:
+                    pattern = re.compile(r'^\s*([\w-]+\s*)+?([\s,]+?([\w.-]+\s*)+?[\s;]*?)?$', re.UNICODE)
+                    if not re.match(pattern, ins[2]):
+                        valid = False
+                        msg = 'Wrong director or PI name'
+                else:
+                    valid = False
+                    msg = 'Director or PI name is empty'
+    else:
+        valid = False
+        msg = 'Empty institution string'
+
+    msg and CDC_MSG.append(msg + ': ' + txt)
+     
+    return valid
+
+def validate_director(txt):
+    """Institute checking, format:
+    Director(or PI)Name, Vorname|Abbr.
+    """
+    valid = True
+    if txt:                    #     Lastname       ,\s      Firstname or abbr     ;\s 
+        # pattern = re.compile(r"^(\s* ([\w-]+\s*)+?  ([\s,]+? ([\w.-]+\s*)+? [\s;]*? )? )?$", re.UNICODE)
+        pattern = re.compile(r"^\s*([\w-]+\s*)+?([\s,]+?([\w.-]+\s*)+?[\s;]*?)?$", re.UNICODE)
+        if not re.match(pattern, txt):
+            valid = False
+            msg = 'Wrong director string: ' + txt
+            CDC_MSG.append(msg)
+    else:
+        valid = False
+        msg = 'Institute is empty'
+        CDC_MSG.append(msg)
+    return valid
+
+def validate_year(txt):
+    """Year checking"""
+    valid = True
+    format = "%Y"
+    if txt:
+        try:
+            datetime.datetime.strptime(txt, format)
+        except Exception:
+            valid = False
+            msg = 'Wrong year: ' + txt
+            CDC_MSG.append(msg)
+    else:
+        valid = False
+        msg = 'Year is empty'
+        CDC_MSG.append(msg)
+    return valid
+
+
 def validate(cdc_dict):
     logger.info("""Validate the CDC mandatory fields and content...""")
 
@@ -111,16 +231,11 @@ def validate(cdc_dict):
         msg =  'Certificate mandatory fields are not filled: ' + ', '.join(s2.difference(s1))
         CDC_MSG.append(msg)
 
-    # 2. check content
-    v = validate_year(cdc_dict.get('Year'))
-    v and CDC_MSG.append(v)
-    v = validate_author(cdc_dict.get('Author'))
-    v and CDC_MSG.append(v)
-    # valid = validate_author(cdc_dict.get('Author')) and valid
-    v = validate_institute(cdc_dict.get('Institute'))
-    v and CDC_MSG.append(v)
+    # 2. check content"
 
-    valid &= len(CDC_MSG) == 0
+    valid = validate_year(cdc_dict.get('Year')) and valid
+    valid = validate_author(cdc_dict.get('Author')) and valid
+    valid = validate_institute(cdc_dict.get('Institute')) and valid
     logger.info('Catalog metadata are {}:\n{}'.format('valid' if valid else 'not valid', '\n'.join(CDC_MSG)))
     return valid
 
@@ -161,6 +276,8 @@ def send_email(to, msg_ctx):
         logger.info("Sucessfully sent")
     except Exception:
         logger.error('Cannot send email: %s', traceback.format_exc())
+
+
 
 def has_at_least_one_creative_dirent(dir):
 

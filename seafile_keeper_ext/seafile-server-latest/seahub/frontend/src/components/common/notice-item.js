@@ -202,24 +202,9 @@ class NoticeItem extends React.Component {
     if (noticeType === BLOXBERG_MSG) {
       let avatar_url = '/media/custom/KeeperAvatar.png';
       detail = JSON.parse(detail);
-      let notice = ""
-      if (detail.transaction_id) {
-        if (detail.content_type === 'dir') {
-          let landing_page_link = `${siteRoot}landing-page/libs/${encodeURIComponent(detail.repo_id)}/`
-          notice = gettext('This notice verifies that {detail.author_name} certified the files within the library {detail.repo_name} via the bloxberg blockchain. Additional information like the files and the corresponding certificates can be found at') +
-          ' <a target="_blank" href="' + landing_page_link +'">' + detail.repo_name + '</a>.';
-          notice = notice.replace('{detail.author_name}', detail.author_name).replace('{detail.repo_name}', detail.repo_name)
-        } else {
-          let file_link = `${siteRoot}lib/${encodeURIComponent(detail.repo_id)}/file/${encodeURIComponent(detail.link_to_file)}`
-          let landing_page_link = `${siteRoot}landing-page/libs/${encodeURIComponent(detail.repo_id)}/`
-          notice = gettext('This notice verifies that {detail.author_name} certified the file within the library {detail.repo_name} via the bloxberg blockchain. Additional information like the file and the corresponding certificate can be found at') +
-          ' <a target="_blank" href="' + landing_page_link +'">' + detail.repo_name + '</a>.';
-          notice = notice.replace('{detail.author_name}', detail.author_name).replace('{detail.repo_name}', detail.repo_name)
-        }
-      } else {
-        notice = detail.message;
-      }
-
+      let notice = 'Your data was successfully certified. Check your transaction on Bloxberg. ' +
+          '<a target="_blank" href="https://blockexplorer.bloxberg.org/tx/' +  detail.transaction_id + '/internal_transactions">'
+          + 'View transaction</a>.';
       return {avatar_url, notice};
     }
 
@@ -243,9 +228,9 @@ class NoticeItem extends React.Component {
       let avatar_url = '/media/custom/KeeperAvatar.png';
       detail = JSON.parse(detail);
       let notice = detail.msg === 'Archive for %(name)s has been successfully created.'
-        ? gettext(detail.msg).replace('%(name)s',  '<a href="/library/' + detail.repo_id + '/' + detail.repo_name + '/" target=_new>'
+          ? gettext(detail.msg).replace('%(name)s',  '<a href="/library/' + detail.repo_id + '/' + detail.repo_name + '/" target=_new>'
             + detail.repo_name + '</a>')
-        : gettext(detail.msg);
+          : gettext(detail.msg);
       return {avatar_url, notice};
     }
 

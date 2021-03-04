@@ -72,6 +72,12 @@ You've got {{num}} new notices on {{ site_name }}:
                 {% json_to_var notice.detail as cdc_msg %}
                 <p style="line-height:1.5; margin:.2em 10px .2em 0;">{{ cdc_msg.title }} <a href="{{ url_base }}/#my-libs/lib/{{ cdc_msg.lib }}">{{ cdc_msg.lib_name }}</a>: {{ cdc_msg.message }}
 
+                {% elif notice.msg_type  == 'bloxberg_msg' %}
+                {% json_to_var notice.detail as bloxberg_msg %}
+                <p style="brief">
+                This notice verifies that <b>{{bloxberg_msg.author_name}}</b> uploaded a data hash of the file: <a href="{{ url_base }}/lib/{{ bloxberg_msg.repo_id }}/file{{bloxberg_msg.link_to_file}}">{{bloxberg_msg.file_name}}</a> that proves authenticity of the corresponding data matching the hash.
+                It was authenticated in the following transaction on the bloxberg blockchain <a href="https://blockexplorer.bloxberg.org/tx/{{ bloxberg_msg.transaction_id }}/internal_transactions">{{bloxberg_msg.transaction_id}}</a></p>
+
                 {% elif notice.msg_type == "invalid_metadata_msg" %}
                     {% json_to_var notice.detail as invalid_metadata_msg %}
                     <p style="line-height:1.5; margin:.2em 10px .2em 0;">{{ invalid_metadata_msg.message }} Check <a href="{{ url_base }}/lib/{{ invalid_metadata_msg.lib }}/file/{{invalid_metadata_msg.archive_metadata}}" target="_new">{{ invalid_metadata_msg.archive_metadata }}</a> for more details.</p>

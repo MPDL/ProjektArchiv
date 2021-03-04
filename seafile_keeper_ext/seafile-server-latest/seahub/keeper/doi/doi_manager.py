@@ -7,8 +7,7 @@ from seaserv import seafile_api, get_repo
 from seahub.api2.utils import json_response
 from seahub.settings import SERVICE_URL, SERVER_EMAIL, ARCHIVE_METADATA_TARGET
 from keeper.common import parse_markdown_doi
-from keeper.utils import validate_year, validate_author, validate_institute, validate_resource_type
-from keeper.cdc.cdc_manager import has_at_least_one_creative_dirent
+from keeper.cdc.cdc_manager import validate_year, validate_author, validate_institute, has_at_least_one_creative_dirent
 from seahub.notifications.models import UserNotification
 from seahub.utils import send_html_email, get_site_name
 from django.utils.translation import ugettext as _
@@ -167,16 +166,16 @@ def validate(doi_dict, repo_id, user_email):
         invalid_fields = set()
 
     # 2. check content
-    year_valid = validate_year(doi_dict.get('Year')) is None
+    year_valid = validate_year(doi_dict.get('Year'))
     if not year_valid:
         invalid_fields.add('Year')
-    author_valid = validate_author(doi_dict.get('Author')) is None
+    author_valid = validate_author(doi_dict.get('Author'))
     if not author_valid:
         invalid_fields.add('Author')
-    institute_valid = validate_institute(doi_dict.get('Institute')) is None
+    institute_valid = validate_institute(doi_dict.get('Institute'))
     if not institute_valid:
         invalid_fields.add('Institute')
-    resource_type_valid = validate_resource_type(doi_dict.get("Resource Type")) is None
+    resource_type_valid = validate_resource_type(doi_dict.get("Resource Type"))
     if not resource_type_valid:
         invalid_fields.add('Resource Type')
 
@@ -189,6 +188,21 @@ def validate(doi_dict, repo_id, user_email):
         doi_msg.append(msg)
         send_notification(doi_msg, repo_id, MSG_TYPE_INVALID_METADATA_MSG, user_email)
     return doi_msg
+
+def validate_resource_type(txt):
+    """resource_type checking, options:
+    Libray, Project
+    """
+    valid = True
+    if txt:
+        pattern = re.compile("^(Library|Project)$", re.UNICODE)
+        if not re.match(pattern, txt):
+            valid = False
+            msg = 'Wrong Institution string: ' + txt
+            LOGGER.info(msg)
+    else:
+        valid = False
+    return valid
 
 def br():
     return "\n"

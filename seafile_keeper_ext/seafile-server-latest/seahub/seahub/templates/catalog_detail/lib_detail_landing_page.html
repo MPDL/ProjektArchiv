@@ -1,0 +1,55 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}css/landing_page.css"/>
+		<link rel="stylesheet" type="text/css" href="/media/assets/css/bootstrap.min.css"/>
+		<script type="text/javascript" src="/media/assets/scripts/lib/jquery.min.js" id="jquery"></script>
+
+		<title>{% trans "Landing Page" %}</title>
+		<link rel="icon" type="image/x-icon" href="/media/img/favicon.png" />
+	</head>
+
+	<body>
+		<!-- HEADER -->
+		<div id="header">
+			<a href="/"><img id="KEEPER_logo" src="{{MEDIA_URL}}img/catalog/KEEPER_logo.png" title="{% trans "Landing Page" %}"/></a>
+		</div>
+
+		<div class="container doi_root">
+			<div>
+				{% if hasCDC == True %}
+				<img id="cared" src="/catalog/static/certified.png" />
+				{% endif %}
+			</div>
+			<div>
+				<h1 class="doi_title">{{md.title}}</h1>
+				<p class="doi_desc more">{{md.description}}</p>
+
+				<div class="doi_table_row"><b>{% trans "Author(s)" %}: </b>{{authors}}</div>
+				<div class="doi_table_row"><b>{% trans "Institute" %}: </b>{{md.institute}}</div>
+				<div class="doi_table_row"><b>{% trans "Year" %}: </b>{{md.year}}</div>
+				<br />
+
+				{% if archive_repos|length > 0 %}
+					<b>{% trans "Archives" %}</b><br />
+					{% for archive_repo in archive_repos%}
+					<a href="/archive/libs/{{archive_repo.repo_id}}/{{archive_repo.version}}/0/">Archive {{archive_repo.created}}</a><br />
+					{% endfor %}
+					<br />
+				{% endif %}
+				{% if doi_repos.count > 0 %}
+					<b>{% trans "Digital Object Identifier(DOI)" %}</b><br />
+					{% for doi_repo in doi_repos%}
+					<a href="{{doi_repo.doi}}">{{doi_repo.doi}}</a><br />
+					{% endfor %}
+					<br />
+				{% endif %}
+				<div class="doi_table_row"><b>{% trans "Contact" %}: </b><a class="doi_contact" href="mailto:{{owner_contact_email}}">{{owner_contact_email}}</a></div>
+			</div>
+		</div>
+		{% include "keeper_footer.html" %}
+		{% include "show_more.html" %}
+	</body>
+</html>

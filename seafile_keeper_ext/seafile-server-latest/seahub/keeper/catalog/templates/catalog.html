@@ -1,0 +1,247 @@
+{% load i18n %}
+<!DOCTYPE html>
+<head>
+<title>{% trans "Catalog - KEEPER" %}</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="File Collaboration Team Organization" />
+<link rel="icon" type="image/x-icon" href="/media/img/favicon.png?t=1465786517" />
+<!--[if IE]>
+<link rel="shortcut icon" href="https://keeper.mpdl.mpg.de/media/img/favicon.png?t=1465786517"/>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/media/assets/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="/media/css/seahub.min.css?t=1465786517" />
+<link rel="stylesheet" type="text/css" href="/media/custom/__BRANDING_CSS__" />
+<style>
+
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    #header {
+        padding-top: 16px;
+        margin-bottom: 20px;
+   		background: #f4f4f7 !important;
+        width: 100% !important;
+        font-size: 14px !important;
+        border-bottom: 1px solid #e8e8e8 !important;
+        padding-bottom: 4px !important;
+        z-index: 1 !important;
+	}
+	#header-inner {
+		height: 48px;
+		width: 950px;
+		margin: 0 auto;
+	}
+	#logo{
+        position: absolute; 
+        top: 13px !important; 
+        left: 16px !important;
+        margin-top: -5px;
+    }
+
+	#main {
+        min-height: 400px;
+        margin: 0 auto;
+
+    }
+    .side-tabnav h3 {
+        margin-top: 65px !important;
+        color: #57a5b8 !important;
+    }
+    .side-tabnav label {
+        margin-top: 0px;
+    }
+    .side-tabnav span.vam {
+        margin-left: 5px;
+    }
+	.item-block {
+		box-sizing:border-box;
+		border-bottom:1px solid #dddddd;
+		display:block;
+		width:100%;
+		padding:10px 10px 10px 45px;
+	}
+
+	.item-block img {
+		float:left;
+		margin-top:4px;
+		margin-left:-35px;
+		width:20px;
+	}
+	.item-block h3,
+	.item-block p {
+		margin: 0;
+		padding: 0;
+	}
+	a.pagination {
+		display:inline-block;
+		padding:5px 10px;
+	}
+	a.pagination.active {
+		background-color:#57a5b8;
+		color:#ffffff !important;
+	}
+	a.pagination:hover {
+		background-color:#f4efde;
+		text-decoration:none;
+	}
+	a.lib {
+		/padding-left:10px !important;
+	}
+	a.lib:hover {
+		text-decoration:none;
+	}
+	.errmsg {
+		color:#cc0000;
+	}
+	span.disabled {
+		padding:5px 10px;
+		color:#cccccc;
+		font-weight: bold;
+	}
+    #lg_footer h4 {
+        color: #57a5b8 !important;
+    }
+    #keeper-links {
+        margin-top: 10px;
+    }
+    #seafile-credits {
+        margin-top: 5px;
+        text-align: center;
+    }
+       
+</style>
+</head>
+
+<body>
+    <div id="wrapper" class="en">
+        <div id="header">
+            <div id="header-inner">
+                <a href="/" id="logo" class="fleft">
+                    <img src="/media/{{ logo_path }}" title="{% trans "Catalog - KEEPER" %}" alt="logo" width="140" height="40" />
+                </a>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div id="main" class="raw clear">
+
+                {#% if data_nav %#}
+                {% if not errmsg %}
+                <div id="left-panel" class="col-md-3 side-tabnav">
+
+                    <h3 class="hd">{% trans "Show Projects" %}</h3>
+                    <form id="scope-selector" method="post">
+                        <label class="radio-item">
+                            <input class="vam" type="radio" name="cat_scope" value="with_metadata" {{ checked_with_metadata }}/><span class="vam">{% trans "with metadata" %}</span>
+                        </label>
+                        <br>
+                        <label class="radio-button">
+                            <input class="vam" type="radio" name="cat_scope" value="with_certificate" {{ checked_with_certificate }}/><span class="vam">{% trans "with certificate" %}</span>
+                        </label>
+                        <br>
+                        <label class="radio-button">
+                            <input class="vam" type="radio" name="cat_scope" value="all" {{ checked_all }}/><span class="vam">{% trans "all" %}</span>
+                        </label>
+                    </form>
+
+                </div>
+                <div class="col-md-9" id="right-panel">
+
+                    {#{ debug }#}
+
+                    <div class="hd ovhd">
+                        <h3 class="fleft">{% trans "The KEEPER Project Catalog of the Max Planck Society" %}</h3>
+                    </div>
+                {% endif %}
+
+                {% for r in results %}
+                        <div class="item-block" id="{{ r.repo_id }}">
+                            {% if r.is_certified %}
+                                <img src="/catalog/static/certified.png" />
+                            {% endif %}
+                            {% autoescape off %}
+                                {{ r.title }}
+                                {{ r.description }}
+                                {{ r.author }}
+                                {{ r.year }}
+                                {{ r.contact }}
+                                {{ r.landing_page_url }}
+                                {#<!-- {{ r.debug  }} -->#}
+                            {% endautoescape %}
+                        </div>
+                {% endfor %}
+
+
+                {% if pagination %}
+                <p style="margin-top:20px">
+
+                    {% if page_prev %}
+                        <a class="pagination" href="/catalog/index.py?page={{ page_prev.page }}&scope={{ page_prev.scope }}">Previous</a>
+                    {% endif %}
+
+                    {% if group_prev %}
+                        <a class="group-prev" href="/catalog/index.py?page={{ group_prev.page }}&scope={{ group_prev.scope }}">...</a>
+                    {% endif %}
+
+                    {% for p in pagination %}
+                        <a class="pagination {{ p.cssclass }}" href="/catalog/index.py?page={{ p.page }}&scope={{ p.scope }}">{{ p.page }}</a>
+                    {% endfor %}
+
+                    {% if group_next %}
+                        <a class="group-next" href="/catalog/index.py?page={{ group_next.page }}&scope={{ group_next.scope }}">...</a>
+                    {% endif %}
+
+                    {% if page_next %}
+                        <a class="pagination" href="/catalog/index.py?page={{ page_next.page }}&scope={{ page_next.scope }}">Next</a>
+                    {% endif %}
+                </p>
+                {% endif %}
+
+                {% if data_nav %}
+                    </div>
+                {% endif %}
+
+                {% if errmsg %}
+                <div id="main-panel" class="clear w100 ovhd">
+                    <h3 class="errmsg" style="max-width:450px;text-align:center;margin:auto;padding:50px 0;">{{ errmsg }}</h3>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    {% include footer %}
+
+    <script type="text/javascript" src="/media/assets/scripts/lib/jquery.min.js" id="jquery"></script>
+    <script type="text/javascript">
+        $('#scope-selector').click(function( event ) {
+            var form = $( this ),
+                target = $( event.target )
+            if ( target.is('input') && !target.attr('checked') ) {
+                $.post("/catalog/", form.serialize(), function(){
+                    form.submit();
+                });
+            }
+        });
+
+        function ajaxErrorHandler(xhr, textStatus, errorThrown) {
+            if (xhr.responseText) {
+                feedback($.parseJSON(xhr.responseText).error||$.parseJSON(xhr.responseText).error_msg, 'error');
+            } else {
+                feedback("Failed. Please check the network.", 'error');
+            }
+        }
+    </script>
+    <!-- Start of mpdl Zendesk Widget script -->
+    <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=32977f9b-455d-428b-8dd5-f4c65aad0daa"> </script>
+    <!-- End of mpdl Zendesk Widget script -->
+</body>
+
+
+</html>
+

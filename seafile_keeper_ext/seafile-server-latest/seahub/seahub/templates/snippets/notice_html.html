@@ -48,7 +48,7 @@
 
     {% elif notice.msg_type  == "bloxberg_msg" %}
         {% json_to_var notice.detail as bloxberg_msg %}
-        <p class="brief">Your data was successfully certified. Check your transaction on bloxberg. <a href="#" onclick='window.open("https://blockexplorer.bloxberg.org/tx/{{ bloxberg_msg.transaction_id }}/internal_transactions");return false;'>View transaction</a></p>
+        <p class="brief">Your data was successfully certified. Check your transaction on Bloxberg. <a href="#" onclick='window.open("https://blockexplorer.bloxberg.org/tx/{{ bloxberg_msg.transaction_id }}/internal_transactions");return false;'>View transaction</a></p>
 
     {% elif notice.msg_type == "invalid_metadata_msg" %}
         {% json_to_var notice.detail as invalid_metadata_msg %}

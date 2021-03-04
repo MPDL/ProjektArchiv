@@ -1,6 +1,6 @@
 import cookie from 'react-cookies';
 import { SeafileAPI } from 'seafile-js';
-import { KeeperAPI } from './keeper-api';
+import { KeeperAPI } from './keeper-api'
 import { siteRoot } from './constants';
 
 let seafileAPI = new SeafileAPI();

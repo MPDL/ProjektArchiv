@@ -12,7 +12,6 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const BundleTracker = require('webpack-bundle-tracker');
-const fs = require('fs')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -60,11 +59,6 @@ module.exports = {
       require.resolve('./polyfills'),
       require.resolve('react-dev-utils/webpackHotDevClient'),
       paths.appSrc + "/tc-accept.js",
-    ],
-    TCView: [
-      require.resolve('./polyfills'),
-      require.resolve('react-dev-utils/webpackHotDevClient'),
-      paths.appSrc + "/tc-view.js",
     ],
     userNotifications: [
       require.resolve('./polyfills'),
@@ -214,27 +208,7 @@ module.exports = {
     search: [
       require.resolve('./polyfills'),
       require.resolve('react-dev-utils/webpackHotDevClient'),
-      paths.appSrc + '/pages/search',
-    ],
-    keeperProjectCatalog: [
-      require.resolve('./polyfills'),
-      require.resolve('react-dev-utils/webpackHotDevClient'),
-      paths.appSrc + '/keeper-project-catalog.js',
-    ],
-    bloxbergCertificate: [
-      require.resolve('./polyfills'),
-      require.resolve('react-dev-utils/webpackHotDevClient'),
-      paths.appSrc + "/bloxberg-certificate.js",
-    ],
-    bloxbergRepoSnapshot: [
-      require.resolve('./polyfills'),
-      require.resolve('react-dev-utils/webpackHotDevClient'),
-      paths.appSrc + "/bloxberg-repo-snapshot.js",
-    ],
-    libraryDetails: [
-      require.resolve('./polyfills'),
-      require.resolve('react-dev-utils/webpackHotDevClient'),
-      paths.appSrc + "/library-details-page.js",
+      paths.appSrc + "/pages/search",
     ],
   },
 
@@ -473,8 +447,8 @@ module.exports = {
   devServer: {
     publicPath: publicPath,
     allowedHosts: [
-      '__NODE_FQDN__',
-      '.mpdl.mpg.de'
+        '__NODE_FQDN__',
+        '.mpdl.mpg.de'
     ],
     hot: true,
     contentBase: '../assets',
@@ -484,10 +458,6 @@ module.exports = {
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
       "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
     },
-    https: {
-      key: fs.readFileSync("/etc/ssl/private/__NODE_FQDN__.key"),
-      cert: fs.readFileSync("/etc/ssl/certs/__NODE_FQDN__.crt")
-    }
 
     // watchOptions: {
     //   aggregateTimeout: 1000,

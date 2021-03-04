@@ -18,11 +18,15 @@ from keeper.models import Catalog, DoiRepo
 
 import logging
 import json
+from netaddr import IPAddress, IPSet
 
 import urllib.request, urllib.error, urllib.parse
 
 from django.core.cache import cache
 from django.db import connections
+
+# time to live of the mpg IP set: day
+IP_SET_TTL = 60 * 60 * 24
 
 MAX_INT = 2147483647
 
@@ -43,6 +47,43 @@ def reconnect_db():
     """
     connections['default'].close()
     connections['keeper'].close()
+
+
+def get_mpg_ip_set():
+    """
+    Get MPG IP ranges from cache or from rena service if cache is expired
+    """
+    if cache.get('KEEPER_CATALOG_LAST_FETCHED') is None:
+        logging.info("Put IPs to cache...")
+        try:
+            # get json from server
+            response = urllib.request.urlopen(KEEPER_MPG_IP_LIST_URL)
+            json_str = response.read()
+            # parse json
+            json_dict = json.loads(json_str)
+            # get only ip ranges
+            ip_ranges = [(list(ipr.items()))[0][0] for ipr in json_dict['details']]
+            ip_set = IPSet(ip_ranges)
+            cache.set('KEEPER_CATALOG_MPG_IP_SET', ip_set, None)
+            cache.set(
+                'KEEPER_CATALOG_LAST_FETCHED',
+                json_dict['timestamp'],
+                IP_SET_TTL)
+        except Exception as e:
+            logging.info("Cannot get/parse MPG IPs DB: %s", e)
+            logging.info("Get IPs from old cache")
+            ip_set = cache.get('KEEPER_CATALOG_MPG_IP_SET')
+    else:
+        logging.info("Get ips from cache...")
+        ip_set = cache.get('KEEPER_CATALOG_MPG_IP_SET')
+    return ip_set
+
+
+def is_in_mpg_ip_range(ip):
+    # only for tests!
+    # return True
+    return IPAddress(ip) in get_mpg_ip_set()
+
 
 def generate_catalog_entry(repo):
     """

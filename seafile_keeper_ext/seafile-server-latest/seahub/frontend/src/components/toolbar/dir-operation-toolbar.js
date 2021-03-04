@@ -8,11 +8,9 @@ import CreateFolder from '../../components/dialog/create-folder-dialog';
 import CreateFile from '../../components/dialog/create-file-dialog';
 import ShareDialog from '../../components/dialog/share-dialog';
 import ViewModeToolbar from './view-mode-toolbar';
-import ArchiveLibraryDialog from '../dialog/archive-library-dialog';
-import CertifyLibraryDialog from '../dialog/certify-library-dialog';
-import KeeperEditMetadataDialog from '../dialog/keeper-edit-metadata-dialog';
-import { keeperAPI } from '../../utils/seafile-api';
-import { handleCanArchiveResponse } from '../../pages/my-libs/mylib-repo-list-item';
+import ArchiveLibraryDialog from "../dialog/archive-library-dialog";
+import { keeperAPI } from "../../utils/seafile-api";
+import { handleCanArchiveResponse } from "../../pages/my-libs/mylib-repo-list-item";
 
 
 const propTypes = {
@@ -47,9 +45,7 @@ class DirOperationToolbar extends React.Component {
       isShareDialogShow: false,
       operationMenuStyle: '',
       isMobileOpMenuOpen: false,
-      isArchiveLibraryDialogShow: false,
-      isEditMetadataDialogShow: false,
-      isCertifyLibraryDialogShow: false,
+      isArchiveLibraryDialogShow: false
     };
   }
 
@@ -179,48 +175,25 @@ class DirOperationToolbar extends React.Component {
     keeperAPI.canArchive(this.props.repoID).then((resp) => {
       const d = resp.data;
       handleCanArchiveResponse(this, resp);
-      if (d.status === 'success' || d.status === 'metadata_error')
-        this.setState({
-          isArchiveLibraryDialogShow: true,
-          quota: d.quota,
-        });
+      if (d.status === 'success')
+        this.setState({isArchiveLibraryDialogShow: true});
     }).catch((error) => {
       let errorMsg = Utils.getErrorMsg(error);
       handleCanArchiveResponse(this, {data: {status: 'system_error', msg: errorMsg}});
     });
   }
 
-  onEditMetadataHide = () => {
-    this.setState({isEditMetadataDialogShow: false});
-  }
-
-  onEditMetadataToggle = () => {
-    this.setState({isEditMetadataDialogShow: true});
-  }
-
-  onCertifyLibraryHide = () => {
-    this.setState({isCertifyLibraryDialogShow: false});
-  }
-
-  onCertifyLibraryToggle = () => {
-    this.setState({isCertifyLibraryDialogShow: true})
-  }
-
   render() {
     let { path, repoName, userPerm } = this.props;
     
-    //Vlad: seafile bug?
-    //if (userPerm !== 'rw' && userPerm !== 'admin') {
-    //  return '';
-    //
-    //}
+    if (userPerm !== 'rw' && userPerm !== 'admin') {
+      return '';
+    }
 
     let itemType = path === '/' ? 'library' : 'dir';
     let itemName = path === '/' ? repoName : Utils.getFolderName(path);
 
     let isArchiveBtnShow = ! this.props.repoEncrypted && this.props.isRepoOwner;
-    let isEditMetadataBtnShow = ! this.props.repoEncrypted && this.props.isRepoOwner;
-    let isCertifyBtnShow = ! this.props.repoEncrypted && this.props.isRepoOwner;
 
     let content = null;
     if (Utils.isDesktop()) {
@@ -232,15 +205,7 @@ class DirOperationToolbar extends React.Component {
             <button className="btn btn-secondary operation-item" title={gettext('Upload')} onClick={this.onUploadFile}>{gettext('Upload')}</button>}
           <button className="btn btn-secondary operation-item" title={gettext('New')} onClick={this.onCreateClick}>{gettext('New')}</button>
           {showShareBtn && <button className="btn btn-secondary operation-item" title={gettext('Share')} onClick={this.onShareClick}>{gettext('Share')}</button>}
-          {isArchiveBtnShow &&
-            <button className="btn btn-secondary operation-item" title={gettext('Archive')} onClick={this.onArchiveLibraryToggle}>{gettext('Archive')}</button>
-          }
-          {isCertifyBtnShow &&
-            <button className="btn btn-secondary operation-item" title={gettext('Certify')} onClick={this.onCertifyLibraryToggle}>{gettext('Certify')}</button>
-          }
-          {isEditMetadataBtnShow &&
-            <button className="btn btn-secondary operation-item" title={gettext('Metadata')} onClick={this.onEditMetadataToggle}>{gettext('Metadata')}</button>
-          }
+          {isArchiveBtnShow && <button className="btn btn-secondary operation-item" title={gettext('Archive')} onClick={this.onArchiveLibraryToggle}>{gettext('Archive')}</button>}
         </Fragment>
       );
     } else {
@@ -258,30 +223,28 @@ class DirOperationToolbar extends React.Component {
 
     return (
       <Fragment>
-        {(userPerm === 'rw' || userPerm === 'admin') && (
-          <div className="dir-operation">
-            <div className="operation">
-              {content}
-            </div>
-            {this.state.isUploadMenuShow && (
-              <ul className="menu dropdown-menu" style={this.state.operationMenuStyle}>
-                <li className="dropdown-item" onClick={this.onUploadFile}>{gettext('Upload Files')}</li>
-                <li className="dropdown-item" onClick={this.onUploadFolder}>{gettext('Upload Folder')}</li>
-              </ul>
-            )}
-            {this.state.isCreateMenuShow && (
-              <ul className="menu dropdown-menu" style={this.state.operationMenuStyle}>
-                <li className="dropdown-item" onClick={this.onCreateFolderToggle}>{gettext('New Folder')}</li>
-                <li className="dropdown-item" onClick={this.onCreateFileToggle}>{gettext('New File')}</li>
-                <li className="dropdown-divider"></li>
-                <li className="dropdown-item" onClick={this.onCreateMarkdownToggle}>{gettext('New Markdown File')}</li>
-                <li className="dropdown-item" onClick={this.onCreateExcelToggle}>{gettext('New Excel File')}</li>
-                <li className="dropdown-item" onClick={this.onCreatePPTToggle}>{gettext('New PowerPoint File')}</li>
-                <li className="dropdown-item" onClick={this.onCreateWordToggle}>{gettext('New Word File')}</li>
-              </ul>
-            )}
+        <div className="dir-operation">
+          <div className="operation">
+            {content}
           </div>
-        )}
+          {this.state.isUploadMenuShow && (
+            <ul className="menu dropdown-menu" style={this.state.operationMenuStyle}>
+              <li className="dropdown-item" onClick={this.onUploadFile}>{gettext('Upload Files')}</li>
+              <li className="dropdown-item" onClick={this.onUploadFolder}>{gettext('Upload Folder')}</li>
+            </ul>
+          )}
+          {this.state.isCreateMenuShow && (
+            <ul className="menu dropdown-menu" style={this.state.operationMenuStyle}>
+              <li className="dropdown-item" onClick={this.onCreateFolderToggle}>{gettext('New Folder')}</li>
+              <li className="dropdown-item" onClick={this.onCreateFileToggle}>{gettext('New File')}</li>
+              <li className="dropdown-divider"></li>
+              <li className="dropdown-item" onClick={this.onCreateMarkdownToggle}>{gettext('New Markdown File')}</li>
+              <li className="dropdown-item" onClick={this.onCreateExcelToggle}>{gettext('New Excel File')}</li>
+              <li className="dropdown-item" onClick={this.onCreatePPTToggle}>{gettext('New PowerPoint File')}</li>
+              <li className="dropdown-item" onClick={this.onCreateWordToggle}>{gettext('New Word File')}</li>
+            </ul>
+          )}
+        </div>
         {Utils.isDesktop() && <ViewModeToolbar currentMode={this.props.currentMode} switchViewMode={this.props.switchViewMode} />}
         {this.state.isCreateFileDialogShow && (
           <ModalPortal>
@@ -327,24 +290,6 @@ class DirOperationToolbar extends React.Component {
               quota={this.state.quota}
               hideDialog={this.onArchiveLibraryHide}
               toggleDialog={this.onArchiveLibraryToggle}/>
-          </ModalPortal>
-        )}
-        {this.state.isEditMetadataDialogShow && (
-          <ModalPortal>
-            <KeeperEditMetadataDialog
-              repoID={this.props.repoID}
-              repoName={this.props.repoName}
-              hideDialog={this.onEditMetadataHide}
-              toggleDialog={this.onEditMetadataToggle}/>
-          </ModalPortal>
-        )}
-        {this.state.isCertifyLibraryDialogShow && (
-          <ModalPortal>
-            <CertifyLibraryDialog
-              repoID={this.props.repoID}
-              repoName={this.props.repoName}
-              hideDialog={this.onCertifyLibraryHide}
-              toggleDialog={this.onCertifyLibraryToggle}/>
           </ModalPortal>
         )}
 

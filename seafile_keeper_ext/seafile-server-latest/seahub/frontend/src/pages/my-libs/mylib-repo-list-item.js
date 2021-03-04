@@ -22,7 +22,6 @@ import RepoAPITokenDialog from '../../components/dialog/repo-api-token-dialog';
 import RepoShareUploadLinksDialog from '../../components/dialog/repo-share-upload-links-dialog';
 import AssignDoiDialog from '../../components/dialog/assign-doi-dialog';
 import ArchiveLibraryDialog from '../../components/dialog/archive-library-dialog';
-import CertifyLibraryDialog from '../../components/dialog/certify-library-dialog';
 
 const propTypes = {
   repo: PropTypes.object.isRequired,
@@ -37,22 +36,22 @@ const propTypes = {
 
 var handleCanArchiveResponse = (obj, resp) => {
   const d = resp.data;
-  //alert(JSON.stringify(d));
   let msg, error;
-  const default_error = 'Can not archive library due to unknown reason, please contact support.';
+  const default_error = "Can not archive library due to unknown reason, please contact support.";
+  //alert(JSON.stringify(d));
   if (d.status === 'success')
-    obj.setState({quota: d.quota});
-  else if (d.status === 'in_processing')
+    obj.setState({quota: d.quota})
+  else if (d.status === "in_processing")
     msg = d.msg;
-  else if (d.status === 'quota_expired')
-    error = gettext('Cannot archive, since the maximum number of archives for this library has been reached. Please contact Keeper support.');
-  else if (d.status === 'snapshot_archived')
-    error = gettext('Cannot archive, since the library snapshot has already been archived.');
-  else if (d.status === 'is_too_big')
-    error = gettext('Cannot archive, since the library is too large.');
-  else if (d.status === 'metadata_error') {
-   //pass, error will be handled via archive metadata form
-  } else if (d.status === 'system_error')
+  else if (d.status === "quota_expired")
+    error = gettext("Cannot archive, since the maximum number of archives for this library has been reached. Please contact Keeper support.");
+  else if (d.status === "snapshot_archived")
+    error = gettext("Cannot archive, since the library snapshot has already been archived.");
+  else if (d.status === "is_too_big")
+    error = gettext("Cannot archive, since the library is too large.");
+  else if (d.status === "metadata_error")
+    error = d.msg;
+  else if (d.status === "system_error")
     error = d.msg || default_error;
   else
     error = default_error;
@@ -60,7 +59,7 @@ var handleCanArchiveResponse = (obj, resp) => {
     toaster.danger(error);
   else if (msg)
     toaster.success(msg);
-};
+}
 
 
 class MylibRepoListItem extends React.Component {
@@ -81,11 +80,8 @@ class MylibRepoListItem extends React.Component {
       isFolderPermissionDialogShow: false,
       isAPITokenDialogShow: false,
       isRepoShareUploadLinksDialogOpen: false,
-      isRepoDeleted: false,
       isAssignDoiDialogShow: false,
       isArchiveLibraryDialogShow: false,
-      isCertifyLibraryDialogShow: false,
-      isEditMetadataDialogShow: false,
     };
   }
 
@@ -151,12 +147,6 @@ class MylibRepoListItem extends React.Component {
         break;
       case 'Archive Library':
         this.onArchiveLibraryToggle();
-        break;
-      case 'Certify Library':
-        this.onCertifyLibraryToggle();
-        break;
-      case 'Edit Metadata':
-        this.onEditMetadataToggle();
         break;
       default:
         break;
@@ -241,7 +231,7 @@ class MylibRepoListItem extends React.Component {
   }
 
   onArchiveLibraryHide = () => {
-    this.setState({isArchiveLibraryDialogShow: false});
+        this.setState({isArchiveLibraryDialogShow: false});
   }
 
   onArchiveLibraryToggle = () => {
@@ -250,31 +240,6 @@ class MylibRepoListItem extends React.Component {
       handleCanArchiveResponse(this, resp);
       if (d.status === 'success')
         this.setState({isArchiveLibraryDialogShow: true});
-    }).catch((error) => {
-      let errorMsg = Utils.getErrorMsg(error);
-      handleCanArchiveResponse(this,{data: {status: 'system_error', msg: errorMsg}});
-    });
-  }
-
-  onCertifyLibraryHide = () => {
-    this.setState({isCertifyLibraryDialogShow: false});
-  }
-
-  onCertifyLibraryToggle = () => {
-    this.setState({isCertifyLibraryDialogShow: true});
-  }
-
-  onEditMetadataHide = () => {
-    this.setState({isEditMetadataDialogShow: false});
-  }
-
-  onEditMetadataToggle = () => {
-    keeperAPI.canArchive(this.props.repo.repo_id).then((resp) => {
-      const d = resp.data;
-      
-      handleCanArchiveResponse(this, resp);
-      if (d.status === 'success')
-        this.setState({isEditMetadataDialogShow: true});
     }).catch((error) => {
       let errorMsg = Utils.getErrorMsg(error);
       handleCanArchiveResponse(this,{data: {status: 'system_error', msg: errorMsg}});
@@ -325,12 +290,6 @@ class MylibRepoListItem extends React.Component {
 
   onDeleteRepo = (repo) => {
     seafileAPI.deleteRepo(repo.repo_id).then((res) => {
-      
-      this.setState({
-        isRepoDeleted: true,
-        isDeleteDialogShow: false,
-      });
-      
       this.props.onDeleteRepo(repo);
       let name = repo.repo_name;
       var msg = gettext('Successfully deleted {name}.').replace('{name}', name);
@@ -342,8 +301,6 @@ class MylibRepoListItem extends React.Component {
         errMessage = gettext('Failed to delete {name}.').replace('{name}', name);
       }
       toaster.danger(errMessage);
-
-      this.setState({isRepoDeleted: false});
     });
   }
 
@@ -465,7 +422,6 @@ class MylibRepoListItem extends React.Component {
           <ModalPortal>
             <DeleteRepoDialog
               repo={repo}
-              isRepoDeleted={this.state.isRepoDeleted}
               onDeleteRepo={this.onDeleteRepo}
               toggle={this.onDeleteToggle}
             />
@@ -563,26 +519,7 @@ class MylibRepoListItem extends React.Component {
               toggleDialog={this.onArchiveLibraryToggle}/>
           </ModalPortal>
         )}
-        {this.state.isCertifyLibraryDialogShow && (
-          <ModalPortal>
-            <CertifyLibraryDialog
-              repoID={repo.repo_id}
-              repoName={repo.repo_name}
-              hideDialog={this.onCertifyLibraryHide}
-              toggleDialog={this.onCertifyLibraryToggle}/>
-          </ModalPortal>
-        )}
-        {this.state.isEditMetadataDialogShow && (
-          <ModalPortal>
-            <ArchiveLibraryDialog
-              repoID={repo.repo_id}
-              repoName={repo.repo_name}
-              quota={this.state.quota}
-              hideDialog={this.onEditMetadataHide}
-              toggleDialog={this.onEditMetadataToggle}/>
-          </ModalPortal>
-        )}
-      </Fragment>
+       </Fragment>
     );
   }
 }

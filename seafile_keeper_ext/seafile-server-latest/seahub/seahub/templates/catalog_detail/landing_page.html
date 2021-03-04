@@ -26,14 +26,14 @@
 				<h1 class="doi_title">{{doi_dict.Title}}</h1>
 				<div class="doi_desc more">{{doi_dict.Description}}</div>
 
-				<div class="doi_table_row"><b>{% trans "Author(s)" %}: </b>{{authors}}</div>
-				<div class="doi_table_row"><b>{% trans "Institute" %}: </b>{{institute}}</div>
-				<div class="doi_table_row"><b>{% trans "Year" %}: </b>{{doi_dict.Year}}</div>
+				<div class="doi_table_row"><b>Author(s): </b>{{authors}}</div>
+				<div class="doi_table_row"><b>Institute: </b>{{institute}}</div>
+				<div class="doi_table_row"><b>Year: </b>{{doi_dict.Year}}</div>
 				<div class="doi_table_row"><b>DOI: </b><a class="doi_link" href="{{doi}}">{{doi}}</a></div>
-				<div class="doi_table_row"><b>{% trans "Contact" %}: </b><a class="doi_contact" href="mailto:{{owner_contact_email}}">{{owner_contact_email}}</a></div>
+				<div class="doi_table_row"><b>Contact: </b><a class="doi_contact" href="mailto:{{owner_contact_email}}">{{owner_contact_email}}</a></div>
 
-				<div class="doi_source"><a class="doi_download" href="{{share_link}}">{% trans "Link to dataset (login required)" %}</a></div>
-				<small> *{% trans "*If you don't have access to the dataset, please get in touch with the listed contact." %}</samll>
+				<div class="doi_source"><a class="doi_download" href="{{share_link}}">Link to dataset (login required)</a></div>
+				<small> *If you don't have access to the dataset, please get in touch with the listed contact.</samll>
 			</div>
 		</div>
 		{% include "keeper_footer.html" %}

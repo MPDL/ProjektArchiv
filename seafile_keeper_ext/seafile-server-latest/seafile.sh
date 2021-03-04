@@ -50,9 +50,8 @@ function validate_running_user () {
     fi
 }
 
-export PYTHONPATH=${INSTALLPATH}/seafile/lib/python3.6/site-packages:${INSTALLPATH}/seafile/lib64/python3.6/site-packages:${INSTALLPATH}/seahub/thirdpart:$PYTHONPATH
-export PYTHONPATH=$PYTHONPATH:$pro_pylibs_dir
-export PYTHONPATH=$PYTHONPATH:${INSTALLPATH}/seahub-extra/
+export PYTHONPATH=${INSTALLPATH}/seafile/lib/python3.6/site-packages:${INSTALLPATH}/seahub/thirdpart:$PYTHONPATH
+export PYTHONPATH=$PYTHONPATH:${INSTALLPATH}/seahub-extra
 export PYTHONPATH=$PYTHONPATH:${INSTALLPATH}/seahub-extra/thirdparts
 
 #export PYTHON_EGG_CACHE=$TOPDIR/.cache/Python-Eggs

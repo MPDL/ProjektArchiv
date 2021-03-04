@@ -37,7 +37,7 @@ from seahub.api2.endpoints.address_book.members import AddressBookGroupsSearchMe
 from seahub.api2.endpoints.group_members import GroupMembers, GroupMembersBulk, GroupMember
 from seahub.api2.endpoints.search_group import SearchGroup
 from seahub.api2.endpoints.share_links import ShareLinks, ShareLink, \
-        ShareLinkOnlineOfficeLock, ShareLinkDirents, ShareLinkSaveFileToRepo
+        ShareLinkOnlineOfficeLock, ShareLinkDirents
 from seahub.api2.endpoints.shared_folders import SharedFolders
 from seahub.api2.endpoints.shared_repos import SharedRepos, SharedRepo
 from seahub.api2.endpoints.upload_links import UploadLinks, UploadLink, \
@@ -84,7 +84,6 @@ from seahub.api2.endpoints.activities import ActivitiesView
 from seahub.api2.endpoints.wiki_pages import WikiPagesDirView, WikiPageContentView
 from seahub.api2.endpoints.revision_tag import TaggedItemsView, TagNamesView
 from seahub.api2.endpoints.user import User
-from seahub.api2.endpoints.auth_token_by_session import AuthTokenBySession
 from seahub.api2.endpoints.repo_tags import RepoTagsView, RepoTagView
 from seahub.api2.endpoints.file_tag import RepoFileTagsView, RepoFileTagView
 from seahub.api2.endpoints.tag_filter_file import TaggedFilesView
@@ -177,8 +176,7 @@ from seahub.api2.endpoints.file_participants import FileParticipantsView, FilePa
 from seahub.api2.endpoints.repo_related_users import RepoRelatedUsersView
 
 # KEEPER
-from seahub.api2.views_keeper import DoiView, LandingPageView, ArchiveView, project_catalog_starter, \
-    BloxbergCertView
+from seahub.api2.views_keeper import DoiView, LandingPageView, ArchiveView
 
 urlpatterns = [
     url(r'^accounts/', include('seahub.base.registration_urls')),
@@ -273,9 +271,6 @@ urlpatterns = [
     ## user
     url(r'^api/v2.1/user/$', User.as_view(), name="api-v2.1-user"),
 
-    ## obtain auth token by login session
-    url(r'^api/v2.1/auth-token-by-session/$', AuthTokenBySession.as_view(), name="api-v2.1-auth-token-by-session"),
-
     ## user::smart-link
     url(r'^api/v2.1/smart-link/$', SmartLink.as_view(), name="api-v2.1-smart-link"),
     url(r'^api/v2.1/smart-links/(?P<token>[-0-9a-f]{36})/$', SmartLinkToken.as_view(), name="api-v2.1-smart-links-token"),
@@ -316,7 +311,6 @@ urlpatterns = [
     ## user::shared-download-links
     url(r'^api/v2.1/share-links/$', ShareLinks.as_view(), name='api-v2.1-share-links'),
     url(r'^api/v2.1/share-links/(?P<token>[a-f0-9]+)/$', ShareLink.as_view(), name='api-v2.1-share-link'),
-    url(r'^api/v2.1/share-links/(?P<token>[a-f0-9]+)/save-file-to-repo/$', ShareLinkSaveFileToRepo.as_view(), name='api-v2.1-share-link-save-file-to-repo'),
     url(r'^api/v2.1/share-links/(?P<token>[a-f0-9]+)/dirents/$', ShareLinkDirents.as_view(), name='api-v2.1-share-link-dirents'),
     url(r'^api/v2.1/share-links/(?P<token>[a-f0-9]+)/online-office-lock/$',
             ShareLinkOnlineOfficeLock.as_view(), name='api-v2.1-share-link-online-office-lock'),
@@ -612,7 +606,6 @@ urlpatterns = [
     url(r'^terms/', include('termsandconditions.urls')),
     url(r'^published/', include('seahub.wiki.urls', app_name='wiki', namespace='wiki')),
     url(r'^work-weixin/', include('seahub.work_weixin.urls')),
-    url(r'^weixin/', include('seahub.weixin.urls')),
     # Must specify a namespace if specifying app_name.
     url(r'^drafts/', include('seahub.drafts.urls', app_name='drafts', namespace='drafts')),
 
@@ -731,9 +724,7 @@ urlpatterns = [
     url(r'^doi/libs/(?P<repo_id>[-0-9a-f]{36})/(?P<commit_id>[0-9a-f]{40})/$', DoiView, name='doi_page'),
     url(r'^landing-page/libs/(?P<repo_id>[-0-9a-f]{36})/$', LandingPageView, name='landing_page'),
     url(r'^archive/libs/(?P<repo_id>[-0-9a-f]{36})/(?P<version_id>\d+)/(?P<is_tombstone>\d+)/$', ArchiveView, name='Archive_page'),
-    url(r'^project-catalog/$', project_catalog_starter, name='project_catalog_starter'),
-    url(r'^bloxberg-cert/transaction/(?P<transaction_id>[-0-9a-z]{66})/$', BloxbergCertView, name='bloxberg_cert_page'),
-    url(r'^bloxberg-cert/transaction/(?P<transaction_id>[-0-9a-z]{66})/(?P<checksum>[-0-9a-z]{64})/$', BloxbergCertView, name='bloxberg_cert_page'),
+
 ]
 
 try:

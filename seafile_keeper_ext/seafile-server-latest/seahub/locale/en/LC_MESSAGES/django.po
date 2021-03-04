@@ -1793,14 +1793,14 @@ msgstr ""
 
 #: seahub/help/templates/help/desktop_proxy.html:6
 msgid "Using Proxy in Seafile Client"
-msgstr "Using Proxy in KEEPER Client"
+msgstr "Using Proxy in Seafile Client"
 
 #: seahub/help/templates/help/desktop_proxy.html:8
 msgid ""
 "Seafile client supports 3 types of proxy servers: HTTP proxy, SOCKS5 proxy "
 "and system proxy settings."
 msgstr ""
-"KEEPER client supports 3 types of proxy servers: HTTP proxy, SOCKS5 proxy "
+"Seafile client supports 3 types of proxy servers: HTTP proxy, SOCKS5 proxy "
 "and system proxy settings."
 
 #: seahub/help/templates/help/desktop_proxy.html:10
@@ -1812,7 +1812,7 @@ msgid ""
 "proxy server address."
 msgstr ""
 "HTTP proxy and SOCKS5 proxy requires you to enter the proxy server's address "
-"and port. If you use system proxy settings, KEEPER client reads proxy "
+"and port. If you use system proxy settings, Seafile client reads proxy "
 "settings from the operating system. The operating system has some mechanisms "
 "to auto-detect proxy server information. So you don't have to manually enter "
 "proxy server address."
@@ -1916,7 +1916,7 @@ msgid ""
 "manual.seafile.com/security/security_features.html\">Seafile Manual</a>."
 msgstr ""
 "More technical details of encrypted library can be found at <a href=\"http://"
-"manual.seafile.com/security/security_features.html\">KEEPER Manual</a>."
+"manual.seafile.com/security/security_features.html\">Seafile Manual</a>."
 
 #: seahub/help/templates/help/ignore.html:6
 msgid "Excluding files/folders from syncing"
@@ -2026,14 +2026,14 @@ msgstr ""
 
 #: seahub/help/templates/help/install.html:6
 msgid "Installing Seafile Client Program"
-msgstr "Installing KEEPER Client Program"
+msgstr "Installing Seafile Client Program"
 
 #: seahub/help/templates/help/install.html:8
 msgid ""
 "After downloading Seafile client program, you have 3 steps left to get it up "
 "and running."
 msgstr ""
-"After downloading KEEPER client program, you have 3 steps left to get it up "
+"After downloading Seafile client program, you have 3 steps left to get it up "
 "and running."
 
 #: seahub/help/templates/help/install.html:10
@@ -2087,7 +2087,7 @@ msgid ""
 "this need. Click an unsynced library will open the cloud file browser."
 msgstr ""
 "In some occasions, you want to modify files on the cloud directly without "
-"syncing them. KEEPER client comes with a \"cloud file browser\" to meet "
+"syncing them. Seafile client comes with a \"cloud file browser\" to meet "
 "this need. Click an unsynced library will open the cloud file browser."
 
 #: seahub/help/templates/help/selective_sync.html:6
@@ -2157,7 +2157,7 @@ msgid ""
 "Seafile client's main window and click \"Sync this library\"."
 msgstr ""
 "To sync a library with an existing folder, right click on the library in "
-"KEEPER client's main window and click \"Sync this library\"."
+"Seafile client's main window and click \"Sync this library\"."
 
 #: seahub/help/templates/help/sync_existing.html:14
 msgid "In the pop-up dialog, click the \"Sync with an existing folder\" link."
@@ -2180,10 +2180,10 @@ msgid ""
 "local folder. You can set the interval of this periodic sync. The interval "
 "is set in the unit of seconds."
 msgstr ""
-"Usually KEEPER client automatically detects changes on local folder and "
+"Usually Seafile client automatically detects changes on local folder and "
 "upload the changes to server. However, if the local folder is in a Windows "
-"network share drive, KEEPER client cannot detect changes reliably. In this "
-"case, you can ask KEEPER client to periodically checks for changes in the "
+"network share drive, Seafile client cannot detect changes reliably. In this "
+"case, you can ask Seafile client to periodically checks for changes in the "
 "local folder. You can set the interval of this periodic sync. The interval "
 "is set in the unit of seconds."
 
@@ -4319,7 +4319,7 @@ msgid ""
 "example.com/seafhttp ."
 msgstr ""
 "The internal URL for downloading/uploading files. Users will not be able to "
-"download/upload files if this is not set correctly. If you config KEEPER "
+"download/upload files if this is not set correctly. If you config Seafile "
 "behind Nginx/Apache, it should be SERVICE_URL/seafhttp, like https://seafile."
 "example.com/seafhttp ."
 
@@ -4527,7 +4527,7 @@ msgid ""
 "the default Seafile folder."
 msgstr ""
 "If turn on, the desktop clients will not be able to sync a folder outside "
-"the default KEEPER folder."
+"the default Seafile folder."
 
 #: seahub/templates/sysadmin/settings.html:191
 msgid ""
@@ -5859,7 +5859,6 @@ msgstr "Unable to view Wiki"
 #: seahub/work_weixin/views.py:220
 msgid "Feature is not enabled."
 msgstr "Feature is not enabled."
-
 
 # KEEPER
 msgid "Assign DOI to current state"

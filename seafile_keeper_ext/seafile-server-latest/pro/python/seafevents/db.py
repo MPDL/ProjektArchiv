@@ -132,11 +132,7 @@ def create_db_tables():
         logger.error(e)
         raise RuntimeError("invalid config file %s", config_file)
 
-    try:
-        Base.metadata.create_all(engine)
-    except Exception as e:
-        logger.error("Failed to create database tables: %s" % e)
-        raise RuntimeError("Failed to create database tables")
+    Base.metadata.create_all(engine)
 
 
 # This is used to fix the problem of "MySQL has gone away" that happens when

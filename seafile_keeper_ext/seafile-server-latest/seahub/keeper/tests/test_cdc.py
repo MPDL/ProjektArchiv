@@ -10,16 +10,16 @@ import django
 django.setup()
 
 from seaserv import seafile_api
-from thirdpart.seafobj import commit_mgr, fs_mgr
-from keeper.common import parse_markdown
-from keeper.utils import get_user_name, validate_institute, validate_author
-from keeper.cdc.cdc_manager import quote_arg, validate, CDC_PDF_PREFIX
-from keeper.default_library_manager import copy_keeper_default_library, get_keeper_default_library
+from seafobj import commit_mgr, fs_mgr
+from common import parse_markdown
+from utils import get_user_name
+from cdc.cdc_manager import quote_arg, validate, validate_institute, validate_author, CDC_PDF_PREFIX
+from default_library_manager import copy_keeper_default_library, get_keeper_default_library
 from seahub.settings import SERVER_EMAIL, ARCHIVE_METADATA_TARGET
 
 from seahub.profile.models import Profile
 
-from keeper.tests.keepertestbase import create_tmp_user_with_profile, create_tmp_user, create_tmp_repo
+from keepertestbase import create_tmp_user_with_profile, create_tmp_user, create_tmp_repo
 
 MD_GOOD="""##Title
 Title
@@ -83,41 +83,41 @@ def test_get_user_name(create_tmp_user):
 def test_validate_author():
     """Lastname1, Firstname1; Affiliation11, Affiliation12, ...
     """
-    assert not validate_author("Makarenko, Vladislav; MPDL")
-    assert not validate_author("Van der Hus, Vincent; MPG")
-    assert not validate_author("Moreno Ortega, Silvana Anna; MPG")
+    assert validate_author("Makarenko, Vladislav; MPDL")
+    assert validate_author("Van der Hus, Vincent; MPG")
+    assert validate_author("Moreno Ortega, Silvana Anna; MPG")
 
 
 def test_validate_institute():
-    assert not validate_institute("MPG; MPE; Name, FirstName")
-    assert not validate_institute("Max Planck Digital Library; DRG; Frank, Sander")
-    assert not validate_institute("Institute;Department;Name,F.")
-    assert validate_institute("Institute Department Name,F."), "Wrong institution string: No semicolons"
+    assert validate_institute("MPG; MPE; Name, FirstName")
+    assert validate_institute("Max Planck Digital Library; DRG; Frank, Sander")
+    assert validate_institute("Institute;Department;Name,F.")
+    assert not validate_institute("Institute Department Name,F."), "Wrong institution string: No semicolons"
 
-    assert not validate_institute("Institute")
-    assert not validate_institute("Institute;")
-    assert not validate_institute("Institute; Department")
-    assert not validate_institute("Institute; Department;")
-    assert not validate_institute("Institute Long Name; Department Long Name")
-    assert not validate_institute("Institute Long Name; Department Long Name;")
-    assert not validate_institute("Institute; Department; Director")
-    assert not validate_institute("Institute; Department; Director With Long Name")
-    assert not validate_institute("Institute; Department; Director N.")
-    assert not validate_institute("Institute; Department; Director, N.")
-    assert not validate_institute("Institute Long Name; Department Long Name; Director, N.")
-    assert not validate_institute("Institute; Department; Director, N.;")
-    assert not validate_institute("Institute; Department; Director, , ,, N. ;; ; ")
-    assert not validate_institute("Institute Long Name; Department Long Name; Director, , N.; ")
-    assert not validate_institute("Institute Long Name; Department Long Name; Director, , Ivan Pupkin; ")
-    assert not validate_institute("Name; Department; Director forschungsgruppenleiter, Lastname or Abbr.")
-    assert not validate_institute("Наименование института; Департамент; Франк Сандер")
+    assert validate_institute("Institute")
+    assert validate_institute("Institute;")
+    assert validate_institute("Institute; Department")
+    assert validate_institute("Institute; Department;")
+    assert validate_institute("Institute Long Name; Department Long Name")
+    assert validate_institute("Institute Long Name; Department Long Name;")
+    assert validate_institute("Institute; Department; Director")
+    assert validate_institute("Institute; Department; Director With Long Name")
+    assert validate_institute("Institute; Department; Director N.")
+    assert validate_institute("Institute; Department; Director, N.")
+    assert validate_institute("Institute Long Name; Department Long Name; Director, N.")
+    assert validate_institute("Institute; Department; Director, N.;")
+    assert validate_institute("Institute; Department; Director, , ,, N. ;; ; ")
+    assert validate_institute("Institute Long Name; Department Long Name; Director, , N.; ")
+    assert validate_institute("Institute Long Name; Department Long Name; Director, , Ivan Pupkin; ")
+    assert validate_institute("Name; Department; Director forschungsgruppenleiter, Lastname or Abbr.")
+    assert validate_institute("Наименование института; Департамент; Франк Сандер")
 
-    assert validate_institute("Na(me); Department; Petrov,,,, , ,  I.I."), "Not allowed symbol in institution name"
-    assert validate_institute("Name; Depa<rtmen>t; Petrov,,,, , ,  I.I."), "Not allowed symbol in departament name"
-    assert validate_institute("Name; Department; Petrov,,,, , ,  I.[I]."), "Not allowed symbol in director name"
+    assert not validate_institute("Na(me); Department; Petrov,,,, , ,  I.I."), "Not allowed symbol in institution name"
+    assert not validate_institute("Name; Depa<rtmen>t; Petrov,,,, , ,  I.I."), "Not allowed symbol in departament name"
+    assert not validate_institute("Name; Department; Petrov,,,, , ,  I.[I]."), "Not allowed symbol in director name"
 
-    assert validate_institute(None), "Empty institution string"
-    assert  validate_institute("  "), "Empty institution string"
+    assert not validate_institute(None), "Empty institution string"
+    assert not validate_institute("  "), "Empty institution string"
 
 
 def test_validate_all():

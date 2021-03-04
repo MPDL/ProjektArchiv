@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import MD5 from 'MD5';
-import ReactTooltip from 'react-tooltip';
+import ReactTooltip from 'react-tooltip'
 import { UncontrolledTooltip } from 'reactstrap';
 import { Dropdown, DropdownToggle, DropdownItem } from 'reactstrap';
 import { gettext, siteRoot, mediaUrl, username } from '../../utils/constants';
@@ -78,7 +78,7 @@ class DirentListItem extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.isItemFreezed !== this.props.isItemFreezed && !nextProps.isItemFreezed) {
+    if (!nextProps.isItemFreezed) {
       this.setState({
         highlight: false,
         isOperationShow: false,
@@ -189,22 +189,14 @@ class DirentListItem extends React.Component {
 
   onItemCertify = (e) => {
     e.nativeEvent.stopImmediatePropagation();
-    const {dirent, repoID} = this.props;
-    let filePath = this.getDirentPath(dirent);
-    keeperAPI.canCertify(repoID, dirent.type, filePath).then(() => {
-        this.certifyFile()
-    }).catch(error => {
-        let errMessage = Utils.getErrorMsg(error);
-        toaster.danger(errMessage);
-    })
-  }
 
-  certifyFile = () => {
-    const {dirent, repoID} = this.props;
+    let dirent = this.props.dirent;
+    let repoID = this.props.repoID;
     let filePath = this.getDirentPath(dirent);
-    toaster.success(gettext('Certify the file through bloxberg...'), {duration: 3});
-    keeperAPI.certifyOnBloxberg(repoID, filePath, dirent.type, dirent.name).then(() => {
-      toaster.success(gettext('Transaction succeeded'));
+
+    toaster.success("Certify the file through Bloxberg...", {duration: 4});
+    keeperAPI.certifyOnBloxberg(repoID, filePath).then(() => {
+      toaster.success("Transaction succeeded");
     }).catch(error => {
       let errMessage = Utils.getErrorMsg(error);
       toaster.danger(errMessage);
@@ -581,11 +573,13 @@ class DirentListItem extends React.Component {
                       <i className="op-icon sf2-icon-delete" title={gettext('Delete')} onClick={this.onItemDelete}></i>
                     </li>
                   )}
-                  {this.props.isRepoOwner && dirent.permission === 'rw' && dirent.type === 'file' && (
+                  {dirent.permission === 'rw' && dirent.type === 'file' && (
                     <li className="operation-group-item">
                       <i className="op-icon" data-tip data-for="bloxberg"><img className="small-icon" src={bergImage} onClick={this.onItemCertify} /></i>
                       <ReactTooltip className='hover-keep' id="bloxberg" delayHide={1000} effect="solid">
-                        <span className="tooltip-bold">Certify your file via the bloxberg blockchain.</span>
+                        <span className="tooltip-title">Beta Status ---- only for testing</span>
+                        <p><span className="tooltip-bold">Certify your data via the bloxberg blockchain.</span>
+                        <span className="tooltip-nomal">Check out <a href='https://bloxberg.org' target="_blank">https://bloxberg.org</a></span></p>
                       </ReactTooltip>
                     </li>
                   )}
@@ -800,7 +794,7 @@ class DirentListItem extends React.Component {
               itemPath={direntPath}
               userPerm={dirent.permission}
               repoID={this.props.repoID}
-              repoEncrypted={this.props.repoEncrypted}
+              repoEncrypted={false}
               enableDirPrivateShare={this.props.enableDirPrivateShare}
               isGroupOwnedRepo={this.props.isGroupOwnedRepo}
               toggleDialog={this.closeSharedDialog}

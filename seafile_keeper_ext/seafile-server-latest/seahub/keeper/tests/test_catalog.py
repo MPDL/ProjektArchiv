@@ -4,10 +4,10 @@ import time
 # import cchardet
 
 
-from keeper.catalog.catalog_manager import get_catalog, \
+from keeper.catalog.catalog_manager import is_in_mpg_ip_range, get_catalog, \
         generate_catalog, clean_up_catalog
 
-from keeper.utils import get_user_name, is_in_mpg_ip_range
+from keeper.utils import get_user_name
 
 from keeper.common import print_json
 # @pytest.mark.skip
@@ -28,13 +28,13 @@ def test_catalog():
     """
     start_time = time.time()
     catalog = get_catalog()
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print "--- %s seconds ---" % (time.time() - start_time)
     # for r in catalog:
         # if 'owner_name' in r and  'Vlad' in r['owner_name']:
             # print r
             # print json.dumps(r, indent=4, ensure_ascii = False, sort_keys=True, separators=(',', ': '))#.encode('utf8')
     # print json.dumps(catalog, ensure_ascii = False, indent=4, sort_keys=True, separators=(',', ': '))
-    print("len:", len(catalog))
+    print "len:", len(catalog)
 
 
 @pytest.mark.skip
@@ -46,9 +46,9 @@ def test_generate_catalog():
     """
     start_time = time.time()
     catalog = generate_catalog()
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print "--- %s seconds ---" % (time.time() - start_time)
     print_json(catalog)
-    print("len:", len(catalog))
+    print "len:", len(catalog)
 
 @pytest.mark.skip
 def test_clean_up_catalog():
@@ -62,6 +62,6 @@ def test_clean_up_catalog():
     import django
     django.setup()
 
-    print("Deleted catalog entries: ", clean_up_catalog())
+    print "Deleted catalog entries: ", clean_up_catalog()
 
 

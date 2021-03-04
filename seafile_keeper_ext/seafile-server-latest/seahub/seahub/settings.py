@@ -36,7 +36,7 @@ DATABASES = {
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Berlin'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -278,13 +278,8 @@ AUTHENTICATION_BACKENDS = (
 ENABLE_OAUTH = False
 ENABLE_WATERMARK = False
 
-ENABLE_SHOW_CONTACT_EMAIL_WHEN_SEARCH_USER = False
-
 # enable work weixin
 ENABLE_WORK_WEIXIN = False
-
-# enable weixin
-ENABLE_WEIXIN = False
 
 # enable dingtalk
 ENABLE_DINGTALK = False
@@ -345,14 +340,6 @@ SHARE_LINK_EXPIRE_DAYS_MAX = 0 # 0 means no limit
 # default expire days should be
 # greater than or equal to MIN and less than or equal to MAX
 SHARE_LINK_EXPIRE_DAYS_DEFAULT = 0
-
-# min/max expire days for an upload link
-UPLOAD_LINK_EXPIRE_DAYS_MIN = 0 # 0 means no limit
-UPLOAD_LINK_EXPIRE_DAYS_MAX = 0 # 0 means no limit
-
-# default expire days should be
-# greater than or equal to MIN and less than or equal to MAX
-UPLOAD_LINK_EXPIRE_DAYS_DEFAULT = 0
 
 # mininum length for the password of a share link
 SHARE_LINK_PASSWORD_MIN_LENGTH = 8
@@ -529,7 +516,7 @@ FAVICON_PATH = 'img/favicon.ico'
 # Path to the Logo Imagefile (relative to the media path)
 LOGO_PATH = 'img/seafile-logo.png'
 # logo size. the unit is 'px'
-LOGO_WIDTH = ''
+LOGO_WIDTH = 128
 LOGO_HEIGHT = 32
 
 CUSTOM_LOGO_PATH = 'custom/mylogo.png'
@@ -738,13 +725,13 @@ TWO_FACTOR_DEVICE_REMEMBER_DAYS = 90
 ENABLE_FORCE_2FA_TO_ALL_USERS = False
 
 # Enable wiki
-ENABLE_WIKI = True
+ENABLE_WIKI = False
 
 # Enable 'repo snapshot label' feature
-ENABLE_REPO_SNAPSHOT_LABEL = False
+ENABLE_REPO_SNAPSHOT_LABEL = True
 
 #  Repo wiki mode
-ENABLE_REPO_WIKI_MODE = True
+# ENABLE_REPO_WIKI_MODE = True
 
 ############################
 # HU berlin additional #
@@ -903,7 +890,7 @@ if ENABLE_REMOTE_USER_AUTHENTICATION:
     MIDDLEWARE_CLASSES += ('seahub.auth.middleware.SeafileRemoteUserMiddleware',)
     AUTHENTICATION_BACKENDS += ('seahub.auth.backends.SeafileRemoteUserBackend',)
 
-if ENABLE_OAUTH or ENABLE_WORK_WEIXIN or ENABLE_WEIXIN or ENABLE_DINGTALK:
+if ENABLE_OAUTH or ENABLE_WORK_WEIXIN or ENABLE_DINGTALK:
     AUTHENTICATION_BACKENDS += ('seahub.oauth.backends.OauthRemoteUserBackend',)
 
 #####################
@@ -917,4 +904,4 @@ if ENABLE_OAUTH or ENABLE_WORK_WEIXIN or ENABLE_WEIXIN or ENABLE_DINGTALK:
 #      },
 # ]
 
-SEAFILE_VERSION = "7.1.8"
+SEAFILE_VERSION = "7.1.3"

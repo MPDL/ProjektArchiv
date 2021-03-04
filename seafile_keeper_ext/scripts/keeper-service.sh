@@ -176,6 +176,7 @@ case "$1" in
             if [ ${__NODE_TYPE__} == "APP" ]; then
                 ${USR_CTX} ${script_path}/seafile.sh ${1} >> ${seafile_init_log}
                 ${USR_CTX} ${script_path}/seahub.sh ${1} >> ${seahub_init_log}
+                ${ROOT_CTX} ${seafile_dir}/scripts/catalog-service.sh ${1}
                 systemctl ${1} ${WEB_SERVER}.service
             elif [ ${__NODE_TYPE__} == "BACKGROUND" ]; then
                 if [ "$1" == "restart" ]; then
@@ -195,6 +196,7 @@ case "$1" in
                 ${USR_CTX} ${script_path}/seafile.sh ${1} >> ${seafile_init_log}
                 ${USR_CTX} ${script_path}/seahub.sh ${1} >> ${seahub_init_log}
                 ${USR_CTX} ${seafile_dir}/scripts/keeper-background-tasks.sh ${1} >> ${background_init_log}
+                ${ROOT_CTX} ${seafile_dir}/scripts/catalog-service.sh ${1} 
             fi
             sleep 3
             echo "Done"
@@ -205,6 +207,7 @@ case "$1" in
             if [ ${__NODE_TYPE__} == "APP" ]; then
                 ${USR_CTX} ${script_path}/seahub.sh stop >> ${seahub_init_log}
                 ${USR_CTX} ${script_path}/seafile.sh stop >> ${seafile_init_log}
+                ${ROOT_CTX} ${seafile_dir}/scripts/catalog-service.sh stop 
             elif [ ${__NODE_TYPE__} == "BACKGROUND" ]; then
                 if [ "$2" != "--force" ]; then
                     check_and_exit_keeper_archiving_running
@@ -219,6 +222,7 @@ case "$1" in
                 ${USR_CTX} ${seafile_dir}/scripts/keeper-background-tasks.sh stop >> ${background_init_log}
                 ${USR_CTX} ${script_path}/seahub.sh stop >> ${seahub_init_log}
                 ${USR_CTX} ${script_path}/seafile.sh stop >> ${seafile_init_log}
+                ${ROOT_CTX} ${seafile_dir}/scripts/catalog-service.sh stop
             fi
             sleep 3
             echo "Done"
@@ -260,8 +264,10 @@ case "$1" in
             fi    
             if [ ${__NODE_TYPE__} != "BACKGROUND" ] ; then
                 check_keepalived
+                check_component_running "keeper-catalog" "uwsgi.*catalog.ini"  "CRITICAL"
             fi
             check_memcached
+            #check_component_running "memcached" "memcached" "CRITICAL"
             [ $RC -eq 0 ] && echo_green "Status is OK" || echo_red "Status is not OK" 
             exit $RC
         ;;

@@ -390,7 +390,7 @@ define([
                     }
                 }
             });
-            Common.feedback("Certify the file through bloxberg...", "success");
+            Common.feedback("Certify the file through Bloxberg...", "success");
 
             this._hideMenu();
             return false;

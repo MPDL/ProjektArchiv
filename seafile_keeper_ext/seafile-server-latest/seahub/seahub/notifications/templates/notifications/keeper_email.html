@@ -6,10 +6,8 @@
 
 <p style="font-size:14px; line-height: 1.5; color:#121214; margin:.2em 0 12px;">{% blocktrans with name=to_user|email2nickname %}Hi, {{ name }}{% endblocktrans %}</p>
 <p style="font-size:14px; line-height: 1.5; color:#434144; margin:.2em 0;">
-{% blocktrans count num=notice_count %}
+{% blocktrans%}
 You've got 1 new notice on {{ site_name }}:
-{% plural %}
-You've got {{num}} new notices on {{ site_name }}:
 {% endblocktrans %}
 </p>
 
@@ -24,28 +22,14 @@ You've got {{num}} new notices on {{ site_name }}:
             <td style="padding:8px 3px 5px; border-bottom: 1px solid #eee; text-align:center; vertical-align:center;"><img src="{{ url_base }}{{media_url}}/custom/KeeperAvatar.png" width="32" height="32" alt="" style="border-radius:1000px;" /></td>
             {% elif message_type  == 'bloxberg_msg' %}
             <td style="padding:8px 3px 5px; border-bottom: 1px solid #eee; text-align:center; vertical-align:center;"><img src="{{ url_base }}{{media_url}}/custom/bloxberg_icon.png" width="32" height="32" alt="" style="border-radius:1000px;" /></td>
-            {% elif message_type  == 'start_snapshot_msg' %}
-            <td style="padding:8px 3px 5px; border-bottom: 1px solid #eee; text-align:center; vertical-align:center;"><img src="{{ url_base }}{{media_url}}/custom/bloxberg_icon.png" width="32" height="32" alt="" style="border-radius:1000px;" /></td>
-            {% elif message_type  == 'certify_snapshot_failed_msg' %}
-            <td style="padding:8px 3px 5px; border-bottom: 1px solid #eee; text-align:center; vertical-align:center;"><img src="{{ url_base }}{{media_url}}/custom/bloxberg_icon.png" width="32" height="32" alt="" style="border-radius:1000px;" /></td>
             {% endif %}
             <td style="padding: 5px 3px; border-bottom: 1px solid #eee; font-size: 13px; color: #333; word-wrap: break-word;">
-                {% if message_type  == 'doi_suc_msg'  %}
+                {% if message_type  == 'doi_suc_msg' %}
                 <p style="brief">{{ message }}</p>
                 {% elif message_type  == 'bloxberg_msg' %}
-                    {% if content_type  == 'file'  %}
-                    <p style="brief">
-                    {% blocktrans %}This notice verifies that {{to_user}} certified the file <a href="{{ url_base }}/lib/{{ repo_id }}/file{{link_to_file}}">{{file_name}}</a> within the library {{repo_name}} via the bloxberg blockchain.{% endblocktrans %}
-                    {% blocktrans %}Additional information like the file and the corresponding certificate can be found at <a href="{{ url_base }}/landing-page/libs/{{repo_id}}">{{repo_name}}</a>.{% endblocktrans %}</p>
-                    {% elif content_type  == 'dir'  %}
-                    <p style="brief">
-                    {% blocktrans %}This notice verifies that {{to_user}} certified the files within the library {{repo_name}} via the bloxberg blockchain.{% endblocktrans %}
-                    {% blocktrans %}Additional information like the files and the corresponding certificates can be found at <a href="{{ url_base }}/landing-page/libs/{{repo_id}}">{{repo_name}}</a>.{% endblocktrans %}</p>
-                    {% endif %}
-                {% elif message_type  == 'start_snapshot_msg' %}
-                <p style="brief">{{ message }}</p>
-                {% elif message_type  == 'certify_snapshot_failed_msg' %}
-                <p style="brief">{{ message }}</p>
+                <p style="brief">
+                This notice verifies that <b>{{author_name}}</b> uploaded a data hash of the file: <a href="{{ url_base }}/lib/{{ repo_id }}/file{{link_to_file}}">{{file_name}}</a> that proves authenticity of the corresponding data matching the hash.
+                It was authenticated in the following transaction on the bloxberg blockchain <a href="https://blockexplorer.bloxberg.org/tx/{{ transaction_id }}/internal_transactions">{{transaction_id}}</a></p>
                 {% endif %}
             </td>           
             <td style="padding: 5px 3px; border-bottom: 1px solid #eee; font-size: 13px; color: #333; word-wrap: break-word;">{{timestamp|date:"Y-m-d G:i:s"}}</td>

@@ -490,8 +490,6 @@ ENABLE_TERMS_AND_CONDITIONS = True
 # Since version 6.0
 ENABLE_TWO_FACTOR_AUTH = True
 
-ENABLE_SHOW_CONTACT_EMAIL_WHEN_SEARCH_USER = True
-
 # Enable user select a template when he/she creates library.
 # When user select a template, Seafile will create folders releated to the pattern automaticly.
 # Since version 6.0
@@ -628,10 +626,8 @@ KEEPER_ARCHIVING_NODE = KEEPER_ARCHIVING_ROOT == 'http://__NODE_FQDN__'
 KEEPER_MPG_DOMAINS_URL = '__KEEPER_MPG_DOMAINS_URL__'
 KEEPER_MPG_IP_LIST_URL = '__KEEPER_MPG_IP_LIST_URL__'
 
-# Keeper bloxberg integration
+# Keepear bloxberg integration
 BLOXBERG_SERVER = '__BLOXBERG_SERVER__'
-BLOXBERG_CERTS_STORAGE = '__BLOXBERG_CERTS_STORAGE__'
-BLOXBERG_CERTS_LIMIT = '__BLOXBERG_CERTS_LIMIT__'
 
 TEST_SERVER='__TEST_SERVER__'
 TEST_SERVER_ADMIN='__TEST_SERVER_ADMIN__'
